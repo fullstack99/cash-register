@@ -68,14 +68,14 @@ const Denomination = ({
           >
             +
           </button>
-          {denomination.count > 0 ? (
+          {denomination.count > 0 && (
             <button
               className="btn right btn-danger position-absolute"
               onClick={() => subtractDenomination()}
             >
               -
             </button>
-          ) : null}
+          )}
         </div>
         <div className="card-footer text-light bg-dark clearfix">
           <span className={'badge badge-pill badge-secondary float-left '}>

@@ -84,7 +84,7 @@ const Operations = ({
           </form>
         );
       default:
-        return <div className="mt-4"></div>;
+        return <div className="mt-4" />;
     }
   };
 
