@@ -1,23 +1,29 @@
-import React from "react";
-import RegisterTotal from "./RegisterTotal";
-import Denomination from "./denominations/Denomination";
-import { Demonination, DenominationListProps } from '../types/global'
+import React from 'react';
 
-const BalanceSheet = ({ denominations, onDenominationChange }: DenominationListProps) => {
-  const denominationItems = denominations.map((denomination: Demonination, index: number) => {
-    return (
-      <Denomination
-        denomination={denomination}
-        key={index}
-        isBalanceSheet={true}
-        onDenominationChange={onDenominationChange}
-      />
-    );
-  });
+import RegisterTotal from './RegisterTotal';
+import DenominationPage from './denominations/Denomination';
+import { Denomination, DenominationListProps } from '../types/global';
 
-  const calculateTotal = (denominations: Demonination[]) => {
+const BalanceSheet = ({
+  denominations,
+  onDenominationChange
+}: DenominationListProps) => {
+  const denominationItems = denominations.map(
+    (denomination: Denomination, index: number) => {
+      return (
+        <DenominationPage
+          denomination={denomination}
+          key={index}
+          isBalanceSheet={true}
+          onDenominationChange={onDenominationChange}
+        />
+      );
+    }
+  );
+
+  const calculateTotal = (denominations: Denomination[]) => {
     return denominations
-      .map((denomination: Demonination) => {
+      .map((denomination: Denomination) => {
         return denomination.value * denomination.count;
       })
       .reduce((a: number, b: number) => {
@@ -28,9 +34,7 @@ const BalanceSheet = ({ denominations, onDenominationChange }: DenominationListP
   return (
     <div className="col-md-8 position-relative mt-5 floating-label-panel balance-sheet">
       <div className="border border-light shadow-sm rounded p-4 pt-5">
-        <div className="h2 bg-dark text-light px-2 mb-0">
-          Register Balance
-        </div>
+        <div className="h2 bg-dark text-light px-2 mb-0">Register Balance</div>
         <div className="row">
           <RegisterTotal total={calculateTotal(denominations)} />
           <div className="col-sm-6">

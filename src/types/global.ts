@@ -1,4 +1,4 @@
-export interface Demonination {
+export interface Denomination {
   count: number;
   value: number;
   type: string;
@@ -8,23 +8,23 @@ export interface Demonination {
 export interface OperationResult {
   success: boolean;
   type: string;
-  denominations: Demonination[];
+  denominations: Denomination[];
 }
 
 export interface DenominationsProps {
-  denominations: Demonination[];
-  onDenominationsChange: (denominations: Demonination[]) => void;
+  denominations: Denomination[];
+  onDenominationsChange: (denominations: Denomination[]) => void;
 }
 
 export interface DenominationProps {
-  denomination: Demonination;
+  denomination: Denomination;
   isBalanceSheet: boolean;
-  onDenominationChange: (denomination: Demonination) => void;
+  onDenominationChange: (denomination: Denomination) => void;
 }
 
 export interface DenominationListProps {
-  denominations: Demonination[];
-  onDenominationChange: (denomination: Demonination) => void;
+  denominations: Denomination[];
+  onDenominationChange: (denomination: Denomination) => void;
 }
 
 export interface AlertProps {
@@ -37,7 +37,7 @@ export interface TotalProps {
 }
 
 export interface OperationProps {
-  denomination: Demonination;
+  denomination: Denomination;
 }
 
 export interface ShowMessageProps {

@@ -1,25 +1,44 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import ShowMessage from "../Message";
-import OperationInputLabel from "./OperationLabel";
-import OperationInput from "./OperationInput";
-import { OperationResult, Demonination, DenominationsProps } from '../../types/global';
-import "../../assets/css/operations.css";
+import ShowMessage from '../Message';
+import {
+  OperationResult,
+  Denomination,
+  DenominationsProps
+} from '../../types/global';
+import '../../assets/css/operations.css';
 
-const Operations = ({ denominations, onDenominationsChange }: DenominationsProps) => {
-  const [mode, setMode] = useState('add')
-  const [operationResult, setOperationResult] = useState<OperationResult[]>([])
+const Operations = ({
+  denominations,
+  onDenominationsChange
+}: DenominationsProps) => {
+  const [mode, setMode] = useState('add');
+  const [operationResult, setOperationResult] = useState<OperationResult[]>([]);
 
   const formForMode = () => {
-    const inputLabels = denominations.map((denomination: Demonination, i: number) => {
-      return <OperationInputLabel denomination={denomination} key={i} />;
-    });
-    const inputs = denominations.map((denomination: Demonination, i: number) => {
-      return <OperationInput denomination={denomination} key={i} />;
-    });
+    const inputLabels = denominations.map(
+      (denomination: Denomination, i: number) => (
+        <div className="col-2 text-muted p-0 text-center" key={i}>
+          <small> ${denomination.value}s </small>
+        </div>
+      )
+    );
+
+    const inputs = denominations.map(
+      (denomination: Denomination, i: number) => (
+        <input
+          type="number"
+          className="form-control"
+          data-denominationtype={denomination.type}
+          min="0"
+          autoFocus={denomination.type === 'twenty'}
+          key={i}
+        />
+      )
+    );
 
     switch (mode) {
-      case "add":
+      case 'add':
         return (
           <form
             id="addDenominations"
@@ -37,13 +56,13 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
             </button>
             <p className="text-center text-muted">
               <small>
-                Enter number of $20s, $10s, $5s, $2s and $1s to{" "}
+                Enter number of $20s, $10s, $5s, $2s and $1s to{' '}
                 <span className="text-success">add</span>
               </small>
             </p>
           </form>
         );
-      case "change":
+      case 'change':
         return (
           <form
             id="getChangeForm"
@@ -67,24 +86,24 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
       default:
         return <div className="mt-4"></div>;
     }
-  }
+  };
 
   const getChange = (e: any) => {
     e.preventDefault();
 
-    let changeAmt = parseInt(e.target.querySelector("input").value, 10);
+    let changeAmt = parseInt(e.target.querySelector('input').value, 10);
     let denominationsToMakeChange: any = [],
       countByDenominationType: any = {};
 
     // check if we have enough cash
     if (changeAmt > calculateTotal()) {
       setOperationResult([
-        { success: false, type: "Not enough cash!", denominations: [] },
-      ])
+        { success: false, type: 'Not enough cash!', denominations: [] }
+      ]);
       return;
     }
 
-    denominations.forEach((denomination: Demonination) => {
+    denominations.forEach((denomination: Denomination) => {
       let countToReturn = 0;
       let denominationCount = denomination.count;
 
@@ -97,7 +116,7 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
       if (countToReturn > 0) {
         denominationsToMakeChange.push({
           type: denomination.type,
-          count: countToReturn,
+          count: countToReturn
         });
         countByDenominationType[denomination.type] = countToReturn;
       }
@@ -105,8 +124,8 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
 
     if (changeAmt > 0) {
       setOperationResult([
-        { success: false, type: "Cannot make change!", denominations: [] },
-      ])
+        { success: false, type: 'Cannot make change!', denominations: [] }
+      ]);
     } else {
       takeDenominationsFromRegister(
         countByDenominationType,
@@ -117,17 +136,18 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
 
     // reset the form
     e.target.reset();
-  }
+  };
 
   const takeDenominationsFromRegister = (
     countByDenominationType: any,
-    denominationsToTake: Demonination[],
-    denominationsToReject: Demonination[]
+    denominationsToTake: Denomination[],
+    denominationsToReject: Denomination[]
   ) => {
     let operationResultArr: OperationResult[] = [];
 
-    denominations.map((denomination: Demonination) => {
-      return (denomination.count -= countByDenominationType[denomination.type] || 0);
+    denominations.map((denomination: Denomination) => {
+      return (denomination.count -=
+        countByDenominationType[denomination.type] || 0);
     });
 
     onDenominationsChange(denominations);
@@ -135,20 +155,20 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
     if (denominationsToTake.length) {
       operationResultArr.push({
         success: true,
-        type: "Took",
-        denominations: denominationsToTake,
+        type: 'Took',
+        denominations: denominationsToTake
       });
     }
     if (denominationsToReject.length) {
       operationResultArr.push({
         success: false,
-        type: "Not Enough Bills to take",
-        denominations: denominationsToReject,
+        type: 'Not Enough Bills to take',
+        denominations: denominationsToReject
       });
     }
 
-    setOperationResult(operationResultArr)
-  }
+    setOperationResult(operationResultArr);
+  };
 
   const addDenominationsToRegister = (e: any) => {
     e.preventDefault();
@@ -157,19 +177,19 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
     let addedDenominations: any = [],
       operationResultArr: OperationResult[] = [];
 
-    e.target.querySelectorAll("input").forEach((input: any) => {
+    e.target.querySelectorAll('input').forEach((input: any) => {
       const count = parseInt(input.value, 10) || 0;
 
       countByDenominationType[input.dataset.denominationtype] = count;
       if (count > 0) {
         addedDenominations.push({
           type: input.dataset.denominationtype,
-          count: count,
+          count: count
         });
       }
     });
 
-    denominations.map((denomination: Demonination) => {
+    denominations.map((denomination: Denomination) => {
       return (denomination.count += countByDenominationType[denomination.type]);
     });
     onDenominationsChange(denominations);
@@ -177,56 +197,56 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
     if (addedDenominations.length) {
       operationResultArr.push({
         success: true,
-        type: "Added",
-        denominations: addedDenominations,
+        type: 'Added',
+        denominations: addedDenominations
       });
     }
 
-    setOperationResult(operationResultArr)
+    setOperationResult(operationResultArr);
 
     e.target.reset();
-  }
+  };
 
   const calculateTotal = () => {
     return denominations
-      .map((denomination: Demonination) => {
+      .map((denomination: Denomination) => {
         return denomination.value * denomination.count;
       })
       .reduce((a: number, b: number) => {
         return a + b;
       }, 0);
-  }
+  };
 
   return (
     <div className="col-md-4 mt-5 register-operations floating-label-panel">
       <div className="border border-light shadow-sm rounded p-4 pt-5">
-        <div className="h2 bg-dark text-light px-2 mb-0">
-          Operations
-          </div>
+        <div className="h2 bg-dark text-light px-2 mb-0">Operations</div>
         <ul className="nav nav-tabs">
           <li className="nav-item">
             <button
-              className={`nav-link btn btn-link ${mode === "add" ? "active bg-dark text-light" : ""
-                }`}
+              className={`nav-link btn btn-link ${
+                mode === 'add' ? 'active bg-dark text-light' : ''
+              }`}
               onClick={() => {
-                setMode("add")
-                setOperationResult([])
+                setMode('add');
+                setOperationResult([]);
               }}
             >
               Add
-              </button>
+            </button>
           </li>
           <li className="nav-item">
             <button
-              className={`nav-link btn btn-link ${mode === "change" ? "active bg-dark text-light" : ""
-                }`}
+              className={`nav-link btn btn-link ${
+                mode === 'change' ? 'active bg-dark text-light' : ''
+              }`}
               onClick={() => {
-                setMode("change")
-                setOperationResult([])
+                setMode('change');
+                setOperationResult([]);
               }}
             >
               Change
-              </button>
+            </button>
           </li>
         </ul>
         {formForMode()}
@@ -234,6 +254,6 @@ const Operations = ({ denominations, onDenominationsChange }: DenominationsProps
       </div>
     </div>
   );
-}
+};
 
 export default Operations;

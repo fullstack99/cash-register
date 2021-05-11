@@ -1,5 +1,6 @@
-import React from "react";
-import { TotalProps } from '../types/global'
+import React from 'react';
+
+import { TotalProps } from '../types/global';
 
 const RegisterTotal = ({ total }: TotalProps) => {
   return (
